@@ -1,15 +1,14 @@
 module Page.Blog exposing (Data, Model, Msg, page)
 
 import DataSource exposing (DataSource)
-import DataSource.File as File
-import DataSource.Glob as Glob
 import Date exposing (Date)
 import Head
 import Head.Seo as Seo
 import Html exposing (..)
+import Html.Attributes exposing (alt, attribute, checked, class, controls, disabled, for, height, href, id, method, name, placeholder, src, start, style, target, title, type_, value, width)
 import Json.Decode exposing (Decoder)
-import OptimizedDecoder as Decode exposing (Decoder)
 import Page exposing (Page, PageWithState, StaticPayload)
+import Page.Blog.Post as Post
 import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
 import Route exposing (Route)
@@ -39,12 +38,12 @@ page =
 
 
 type alias Data =
-    List ( Route, Metadata )
+    List ( Route, Post.Metadata )
 
 
 data : DataSource Data
 data =
-    metadatas
+    Post.metadatas
 
 
 head :
@@ -82,99 +81,13 @@ view maybeUrl sharedModel static =
     }
 
 
-viewPostMetadata : ( Route, Metadata ) -> Html Msg
-viewPostMetadata ( route, post ) =
-    div []
-        [ text <| post.title ++ " " ++ post.teaser ++ " " ++ viewTags post.tags
+viewPostMetadata : ( Route, Post.Metadata ) -> Html Msg
+viewPostMetadata ( route, info ) =
+    div [ class "font-sans prose prose-xl text-pink" ]
+        [ text <| info.title ++ " " ++ (info.published |> Date.format "dd MMM yyyy") ++ " " ++ viewTags info.tags
         ]
 
 
 viewTags : List String -> String
 viewTags =
     String.concat
-
-
-
--- BLOG Blog
-
-
-type alias File =
-    { path : String
-    , slug : String
-    }
-
-
-files : DataSource (List File)
-files =
-    Glob.succeed File
-        |> Glob.captureFilePath
-        |> Glob.match (Glob.literal "content/blog/")
-        |> Glob.capture Glob.wildcard
-        |> Glob.match (Glob.literal ".md")
-        |> Glob.toDataSource
-
-
-type alias Post =
-    { route : Route.Route
-    , metadata : Metadata
-    , body : String
-    }
-
-
-posts : DataSource (List Post)
-posts =
-    files
-        |> DataSource.map
-            (\paths ->
-                paths
-                    |> List.map
-                        (\{ path, slug } ->
-                            DataSource.map3 Post
-                                (DataSource.succeed <|
-                                    Route.Blog__Slug_
-                                        { slug = slug }
-                                )
-                                (File.onlyFrontmatter metadataDecoder path)
-                                (File.bodyWithoutFrontmatter path)
-                        )
-            )
-        |> DataSource.resolve
-
-
-type alias Metadata =
-    { title : String
-    , teaser : String
-    , tags : List String
-
-    --, published : Date
-    }
-
-
-metadataDecoder : Decoder Metadata
-metadataDecoder =
-    Decode.map3 Metadata
-        (Decode.field "title" Decode.string)
-        (Decode.field "teaser" Decode.string)
-        (Decode.field "tags" (Decode.list Decode.string))
-
-
-metadatas : DataSource (List ( Route.Route, Metadata ))
-metadatas =
-    files
-        |> DataSource.map
-            (\paths ->
-                paths
-                    |> List.map
-                        (\{ path, slug } ->
-                            DataSource.map2 Tuple.pair
-                                (DataSource.succeed <|
-                                    Route.Blog__Slug_
-                                        { slug = slug }
-                                )
-                                (File.onlyFrontmatter
-                                    metadataDecoder
-                                    path
-                                )
-                        )
-            )
-        |> DataSource.resolve
