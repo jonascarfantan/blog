@@ -1,4 +1,4 @@
-module Page.Blog.Posts exposing (Data, Model, Msg, page)
+module Page.Blog exposing (Data, Model, Msg, page)
 
 import DataSource exposing (DataSource)
 import DataSource.File as File
@@ -77,7 +77,7 @@ view :
     -> StaticPayload Data RouteParams
     -> View Msg
 view maybeUrl sharedModel static =
-    { title = "Blog posts"
+    { title = "Blog Blog"
     , body = List.map viewPostMetadata static.data
     }
 
@@ -95,7 +95,7 @@ viewTags =
 
 
 
--- BLOG POSTS
+-- BLOG Blog
 
 
 type alias File =

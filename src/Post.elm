@@ -11,21 +11,15 @@ import Html.Styled as Html exposing (Html)
 import Markdown.Block exposing (Block)
 import Markdown.Parser
 import OptimizedDecoder exposing (Decoder)
-import Route
+import Route exposing (Route)
 import Shared
 
 
 type alias Post =
-    { filePath : String
-    , subPath : List String
+    { route : Route
+    , path : String
     , slug : String
-    }
-
-
-type alias FullPost =
-    { route : Route.Route
-    , metadata : PostMetadata
-    , content : String
+    , title : String
     }
 
 
