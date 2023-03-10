@@ -8,7 +8,7 @@ import Html exposing (..)
 import Html.Attributes exposing (alt, attribute, checked, class, controls, disabled, for, height, href, id, method, name, placeholder, src, start, style, target, title, type_, value, width)
 import Json.Decode exposing (Decoder)
 import Page exposing (Page, PageWithState, StaticPayload)
-import Page.Blog.Post as Post
+import Domain.Post as Post
 import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
 import Route exposing (Route)
@@ -38,12 +38,12 @@ page =
 
 
 type alias Data =
-    List ( Route, Post.Metadata )
+    List Post.Post
 
 
 data : DataSource Data
 data =
-    Post.metadatas
+    Post.posts
 
 
 head :
@@ -77,17 +77,21 @@ view :
     -> View Msg
 view maybeUrl sharedModel static =
     { title = "Blog Blog"
-    , body = List.map viewPostMetadata static.data
+    , body = List.map renderPostCard static.data
     }
 
 
-viewPostMetadata : ( Route, Post.Metadata ) -> Html Msg
-viewPostMetadata ( route, info ) =
+renderPostCard : Post.Post -> Html Msg
+renderPostCard post =
+    let
+        info = post.metadata
+        url = post.route
+    in
     div [ class "font-sans prose prose-xl text-pink" ]
-        [ text <| info.title ++ " " ++ (info.published |> Date.format "dd MMM yyyy") ++ " " ++ viewTags info.tags
+        [ text <| info.title ++ " " ++ (info.published |> Date.format "dd MM yyyy")
         ]
 
 
-viewTags : List String -> String
-viewTags =
+renderTags : List String -> String
+renderTags =
     String.concat

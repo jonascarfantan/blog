@@ -1,7 +1,8 @@
-module Page.Blog.Post exposing
+module Domain.Post exposing
     ( Metadata
     , Post
     , metadatas
+    , posts
     )
 
 import DataSource exposing (DataSource)
@@ -18,7 +19,17 @@ type alias File =
     { path : String
     , slug : String
     }
-
+type alias Post =
+    { route : Route.Route
+    , metadata : Metadata
+    , body : String
+    }
+type alias Metadata =
+    { title : String
+    , teaser : String
+    , tags : List String
+    , published : Date
+    }
 
 files : DataSource (List File)
 files =
@@ -28,14 +39,6 @@ files =
         |> Glob.capture Glob.wildcard
         |> Glob.match (Glob.literal ".md")
         |> Glob.toDataSource
-
-
-type alias Post =
-    { route : Route.Route
-    , metadata : Metadata
-    , body : String
-    }
-
 
 posts : DataSource (List Post)
 posts =
@@ -55,15 +58,6 @@ posts =
                         )
             )
         |> DataSource.resolve
-
-
-type alias Metadata =
-    { title : String
-    , teaser : String
-    , tags : List String
-    , published : Date
-    }
-
 
 metadataDecoder : Decoder Metadata
 metadataDecoder =
@@ -86,23 +80,16 @@ metadataDecoder =
         )
 
 
-metadatas : DataSource (List ( Route.Route, Metadata ))
+metadatas : DataSource (List Metadata)
 metadatas =
     files
         |> DataSource.map
-            (\paths ->
-                paths
-                    |> List.map
-                        (\{ path, slug } ->
-                            DataSource.map2 Tuple.pair
-                                (DataSource.succeed <|
-                                    Route.Blog__Slug_
-                                        { slug = slug }
-                                )
-                                (File.onlyFrontmatter
-                                    metadataDecoder
-                                    path
-                                )
-                        )
+            (\paths -> paths
+                |> List.map
+                    (\{ path } ->
+                        File.onlyFrontmatter
+                            metadataDecoder
+                            path
+                    )
             )
         |> DataSource.resolve
