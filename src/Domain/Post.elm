@@ -39,6 +39,9 @@ files =
         |> Glob.capture Glob.wildcard
         |> Glob.match (Glob.literal ".md")
         |> Glob.toDataSource
+route : String -> DataSource Route
+route slug =
+    DataSource.succeed <| Route.Blog__Slug_ { slug = slug }
 
 posts : DataSource (List Post)
 posts =
@@ -49,10 +52,7 @@ posts =
                     |> List.map
                         (\{ path, slug } ->
                             DataSource.map3 Post
-                                (DataSource.succeed <|
-                                    Route.Blog__Slug_
-                                        { slug = slug }
-                                )
+                                (route slug )
                                 (File.onlyFrontmatter metadataDecoder path)
                                 (File.bodyWithoutFrontmatter path)
                         )

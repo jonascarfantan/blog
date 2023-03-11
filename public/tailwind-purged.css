@@ -1153,3 +1153,8 @@ video {
   --tw-text-opacity: 1 !important;
   color: rgb(255 73 219 / var(--tw-text-opacity)) !important;
 }
+
+.text-orange {
+  --tw-text-opacity: 1 !important;
+  color: rgb(255 120 73 / var(--tw-text-opacity)) !important;
+}

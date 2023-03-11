@@ -87,7 +87,7 @@ renderPostCard post =
         info = post.metadata
         url = post.route
     in
-    div [ class "font-sans prose prose-xl text-pink" ]
+    div [ class "font-sans prose prose-xl text-orange" ]
         [ text <| info.title ++ " " ++ (info.published |> Date.format "dd MM yyyy")
         ]
 

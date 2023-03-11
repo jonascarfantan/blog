@@ -2,7 +2,7 @@
   "name": "elm-pages-app",
   "scripts": {
     "postinstall": "elm-tooling install",
-    "start": "elm-pages dev",
+    "start": "elm-pages dev & yarn watch:styles",
     "build": "elm-pages build",
     "build:prod": "NODE_ENV=production yarn build:styles && elm-pages build",
     "docs": "yarn elm-doc-preview -p 8080",
