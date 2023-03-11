@@ -1149,12 +1149,15 @@ video {
   font-family: Graphik, sans-serif !important;
 }
 
-.text-pink {
+.text-blue {
   --tw-text-opacity: 1 !important;
-  color: rgb(255 73 219 / var(--tw-text-opacity)) !important;
+  color: rgb(31 182 255 / var(--tw-text-opacity)) !important;
 }
 
-.text-orange {
-  --tw-text-opacity: 1 !important;
-  color: rgb(255 120 73 / var(--tw-text-opacity)) !important;
+@media (min-width: 976px) {
+
+  .lg\:text-pink {
+    --tw-text-opacity: 1 !important;
+    color: rgb(255 73 219 / var(--tw-text-opacity)) !important;
+  }
 }

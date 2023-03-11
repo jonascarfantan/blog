@@ -38,14 +38,14 @@ page =
 
 
 type alias Data =
-    List Post.Post
+    List (Route, Post.Metadata)
 
 
 data : DataSource Data
 data =
-    Post.posts
+    Post.toPostList
 
-
+ 
 head :
     StaticPayload Data RouteParams
     -> List Head.Tag
@@ -65,11 +65,7 @@ head static =
         }
         |> Seo.website
 
-
-
 -- VIEW
-
-
 view :
     Maybe PageUrl
     -> Shared.Model
@@ -80,17 +76,11 @@ view maybeUrl sharedModel static =
     , body = List.map renderPostCard static.data
     }
 
-
-renderPostCard : Post.Post -> Html Msg
-renderPostCard post =
-    let
-        info = post.metadata
-        url = post.route
-    in
-    div [ class "font-sans prose prose-xl text-orange" ]
-        [ text <| info.title ++ " " ++ (info.published |> Date.format "dd MM yyyy")
+renderPostCard : (Route, Post.Metadata) -> Html Msg
+renderPostCard (route, info) =
+    div [ class "font-sans prose prose-xl text-blue lg:text-pink" ]
+        [ text <| info.title ++ " " ++ info.published.day
         ]
-
 
 renderTags : List String -> String
 renderTags =
